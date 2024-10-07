@@ -1,0 +1,832 @@
+/* ============================================================= */
+/*                            Reset                             */
+/* ============================================================= */
+
+/* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Remove default list styles */
+ul {
+    list-style: none;
+}
+
+/* Remove default button styles */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* ============================================================= */
+/*                            Base Styles                        */
+/* ============================================================= */
+
+body {
+    background-color: #1c1c1c;
+    font-family: 'Afacad Flux', sans-serif;
+    color: #ecf0f1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.hidden-player {
+    display: none;
+}
+
+/* ============================================================= */
+/*                            Layout                             */
+/* ============================================================= */
+
+header {
+    padding: 30px;
+    color: #ecf0f1;
+    box-shadow: 0 1px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.record-player {
+    width: 100%;
+    max-width: 1200px;
+    margin: 50px auto 0;
+    padding: 20px;
+}
+
+.base {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #2a2a2a;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    gap: 20px;
+}
+
+
+/* ============================================================= */
+/*                        Speed Control Styles                   */
+/* ============================================================= */
+
+/* Speed Control Wrapper */
+.speed-control {
+    position: relative;
+    flex: 1;
+}
+
+/* Speed Control Button */
+#speed-button {
+    background-color: #444;
+    color: #ecf0f1;
+    padding: 15px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#speed-button:hover {
+    background-color: #555;
+}
+
+/* Speed Value Text */
+#speed-value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Chevron Icon */
+#speed-button .bi-chevron-down {
+    margin-left: auto;
+    transition: transform 0.3s;
+}
+
+/* Dropdown Menu */
+.speed-dropdown {
+    position: absolute;
+    top: -110%;
+    left: 0;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1002;
+}
+
+.speed-dropdown.active {
+    display: flex;
+}
+
+/* Speed Option Buttons */
+.speed-option {
+    padding: 10px 15px;
+    background: none;
+    color: #ecf0f1;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.speed-option:hover {
+    background-color: #444;
+}
+
+/* Rotate Chevron when Dropdown is Active */
+#speed-button[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* ============================================================= */
+/*                            Components                         */
+/* ============================================================= */
+
+.media-center {
+    position: fixed;
+    bottom: 0;
+    right: 5%;
+    width: 90%;
+    max-height: 80vh;
+    background-color: #222;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+    overflow: visible;
+    transform: translateY(160px);
+    
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+    z-index: 999;
+}
+
+/* Active State */
+.media-center.active {
+    transform: translateY(-20px);
+}
+
+/* Media Center Wrapper */
+.media-center-wrapper {
+    position: relative;
+    padding: 20px;
+}
+
+.media-center-toggle {
+    position: absolute;
+    top: -55px;
+    left: 45%;
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+.media-center-toggle:hover {
+    background-color: #555;
+}
+
+/* Rotate the toggle button icon when active */
+.media-center.active .media-center-toggle i {
+    transform: rotate(180deg);
+}
+
+/* Turntable */
+.turntable-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+}
+
+.turntable {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, #444, #222);
+    border: 10px solid #555;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+    overflow: visible;
+    transition: transform 0.5s ease-in-out;
+}
+
+.platter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 80%;
+    background: #333;
+    border-radius: 50%;
+    border: 10px solid #555;
+    transform: translate(-50%, -50%);
+}
+
+.record {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, #0004 60%, #555);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 5s linear infinite;
+    transition: animation-duration 0.5s;
+    z-index: 1;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.grooves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-conic-gradient(#0000 0deg 4deg, #0002 160deg 4deg);
+    opacity: 0.4;
+    border-radius: 50%;
+    animation: spinGrooves 5s linear infinite;
+    pointer-events: none;
+}
+
+.record .label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(circle, #ff5733 40%, #c0392b);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.grooves::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 9px, #555 10px);
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+/* Tonearm and Needle */
+.tonearm {
+    position: absolute;
+    top: 10%;
+    width: 150px;
+    height: 6px;
+    background: #777;
+    border-radius: 8px;
+    transform: rotate(90deg);
+    transform-origin: 0% 50%;
+    transition: transform 1.5s ease;
+    z-index: 2;
+    left: 5%;
+}
+
+.needle {
+    position: absolute;
+    top: -3px;
+    right: -10px;
+    width: 25px;
+    height: 4px;
+    background: #bdc3c7;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Visuals */
+.visuals {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0.5;
+    justify-content: center;
+    gap: 20px;
+}
+
+#visualizer {
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 8px;
+    width: 100%;
+    height: 100px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Content Viewer */
+.content-viewer {
+    width: 100%;
+    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.content-viewer .control-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Control Groups */
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.control-group.volume-control {
+    position: relative;
+}
+
+/* Volume Control */
+.volume-control .volume-slider-container {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0px;
+    height: 100px;
+    background: rgba(42, 42, 42, 0.95);
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 8px;
+    display: none;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    justify-content: center;
+}
+
+.volume-control.active .volume-slider-container {
+    display: flex;
+}
+
+.volume-control .volume-slider-container input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 6px;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    background: none;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Slider Thumb Styles */
+.volume-control .volume-slider-container input[type="range"]::-webkit-slider-thumb,
+.volume-control .volume-slider-container input[type="range"]::-moz-range-thumb {
+    width: 8px;
+    height: 32px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.volume-control .volume-slider-container input[type="range"]::-webkit-slider-thumb:hover,
+.volume-control .volume-slider-container input[type="range"]::-moz-range-thumb:hover {
+    background: #c0392b;
+    transform: scale(1.2);
+}
+
+.volume-control #volume-button {
+    background: transparent;
+    border: none;
+    color: #ecf0f1;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: color 0.3s;
+}
+
+.volume-control #volume-button:hover {
+    color: #e74c3c;
+}
+
+/* Playback Controls */
+.media-center-wrapper {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* New Styles for Menu Button */
+.menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #444;
+    color: #ecf0f1;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1.5rem;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.menu-button:hover {
+    background-color: #555;
+}
+
+/* Toggled Controls (Hidden by Default on Mobile) */
+.toggled-controls {
+    display: none;
+    gap: 10px;
+    background-color: #2a2a2a;
+    padding: 10px;
+    border-radius: 8px;
+    transition: max-height 0.3s ease;
+    width: 100%;
+}
+
+/* Show toggled controls when active */
+.toggled-controls.active {
+    display: flex;
+}
+
+/* Playback Controls Adjustments */
+.playback-controls {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.playback-controls .control-wrapper {
+    gap: 15px;
+}
+
+.playback-controls .control-group.now-playing {
+    text-align: center;
+    color: #ecf0f1;
+    font-weight: 700;
+}
+
+.now-playing {
+    text-align: center;
+    color: #ecf0f1;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#track-name {
+    font-size: 18px;
+    color: #ecf0f1;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+/* Buttons */
+button,
+select {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    border: none;
+}
+
+select {
+    width: unset;
+}
+
+button {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+select {
+    background-color: #333;
+    color: #ecf0f1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Specific Buttons */
+#add-youtube-url {
+    background-color: #e74c3c;
+    color: white;
+}
+
+#add-youtube-url:hover {
+    background-color: #c0392b;
+}
+
+#skip,
+#go-back {
+    background-color: #444;
+    color: #fff;
+    font-size: 1rem;
+}
+
+#skip:hover,
+#go-back:hover {
+    background-color: #555;
+}
+
+/* Volume Icon States */
+.volume-control .volume-button i {
+    transition: color 0.3s;
+}
+
+/* Progress Bar */
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.time {
+    color: #ecf0f1;
+    font-size: 14px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.progress-bar {
+    position: relative;
+    height: 8px;
+    background-color: #555;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.progress-bar:hover {
+    background-color: #666;
+}
+
+.progress {
+    width: 0%;
+    height: 100%;
+    background-color: #e74c3c;
+    transition: width 0.1s linear;
+}
+
+/* Queue Section */
+.queue-dropzone {
+    width: 100%;
+    padding: 15px;
+    border: 2px dashed #e74c3c;
+    border-radius: 8px;
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #ecf0f1;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.queue-dropzone.dragover,
+#turntable-dropzone.dragover {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-color: #c0392b;
+}
+
+.queue-list {
+    list-style: none;
+    width: 100%;
+    max-height: 100px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.queue-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    cursor: move;
+    background-color: #333;
+    transition: background-color 0.3s, opacity 0.3s, border 0.3s;
+    border-radius: 8px;
+}
+
+.queue-list li:hover {
+    background-color: #555;
+}
+
+.queue-list li.dragging {
+    opacity: 0.5;
+    border: 2px dashed #e74c3c;
+}
+
+.queue-list li p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 10;
+}
+
+.remove-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-btn:hover {
+    background-color: #c0392b;
+}
+
+/* YouTube URL Input */
+.youtube-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#youtube-url-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ============================================================= */
+/*                            Animations                         */
+/* ============================================================= */
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes spinGrooves {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Paused State for Record */
+.paused {
+    animation-play-state: paused;
+}
+
+/* Playing and Paused States for Tonearm */
+.playing .tonearm {
+    transform: rotate(60deg);
+}
+
+.paused .tonearm {
+    transform: rotate(90deg);
+}
+
+/* ============================================================= */
+/*                            Media Queries                      */
+/* ============================================================= */
+
+/* Medium Screens (min-width: 800px) */
+@media (min-width: 800px) {
+    .turntable-container {
+        width: 300px;
+        height: 300px;
+    }
+
+    .tonearm {
+        width: 200px;
+    }
+
+    #visualizer {
+        height: 150px;
+    }
+
+    .queue-list {
+        max-height: 150px;
+    }
+
+    .media-center {
+        padding: 20px 40px;
+    }
+
+    .media-center .control-group {
+        gap: 20px;
+    }
+
+    /* Hide Menu Button on Larger Screens */
+    .menu-button {
+        display: none;
+    }
+
+    /* Show Toggled Controls on Larger Screens */
+    .toggled-controls {
+        display: flex !important;
+    }
+    .media-center {
+        transform: translateY(240px);
+    }
+    .media-center-toggle {
+        left: 50%;
+    }
+}
+
+/* Large Screens (min-width: 1100px) */
+@media (min-width: 1100px) {
+    .base {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 40px;
+    }
+
+    .turntable-container {
+        width: 400px;
+        height: 400px;
+    }
+
+    .tonearm {
+        width: 250px;
+    }
+
+    .media-center {
+        padding: 25px 60px;
+    }
+
+    .media-center .control-group {
+        gap: 25px;
+    }
+}
