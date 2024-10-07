@@ -938,7 +938,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (item.type === 'file') {
                 const audioIcon = document.createElement('i');
-                audioIcon.classList.add('bi', 'bi-music-note-beamed');
+                audioIcon.classList.add('bi', 'bi-file-earmark-music');
                 p.appendChild(audioIcon);
                 p.appendChild(document.createTextNode(` ${item.data.name || 'Queued Track'}`));
             } else if (item.type === 'youtube') {
@@ -948,7 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.appendChild(document.createTextNode(` ${item.data.title}`));
             } else if (item.type === 'url') {
                 const urlIcon = document.createElement('i');
-                urlIcon.classList.add('bi', 'bi-file-earmark-music');
+                urlIcon.classList.add('bi', 'bi bi-globe');
                 p.appendChild(urlIcon);
                 p.appendChild(document.createTextNode(` ${item.title || 'Sample Track'}`));
             }
