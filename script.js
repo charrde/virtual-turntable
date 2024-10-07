@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //event listener for the try out file button. play the file located at 'audio/track.mp3'
     tryOutFile.addEventListener('click', () => {
-        addToQueue({ type: 'file', data: 'audio/track.mp3', title: 'Arctic Monkey - Do I Wanna Know?' });
+        addToQueue({ type: 'url', data: 'audio/track.mp3', title: 'Arctic Monkey - Do I Wanna Know?' });
     });
 
     //event listener for the try out youtube button. play the video with the id 'dQw4w9WgXcQ'
@@ -811,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Delay duration in milliseconds (1.5 seconds)
         const delayDuration = 1500;
 
-        if (item.type === 'file') {
+        if (item.type === 'file' || item.type === 'url') {
             currentSource = 'audio';
             const fileURL = URL.createObjectURL(item.data);
             audio.src = fileURL;
