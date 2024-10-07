@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loading-indicator');
     const tryOutFile = document.getElementById('try-out-file');
     const tryOutYouTube = document.getElementById('try-out-youtube');
+    const testFileUrl = require('url:./audio/track.wav');
 
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -384,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //event listener for the try out file button. play the file located at 'audio/track.mp3'
     tryOutFile.addEventListener('click', () => {
-        addToQueue({ type: 'url', data: 'audio/track.mp3', title: 'Arctic Monkey - Do I Wanna Know?' });
+        addToQueue({ type: 'url', data: testFileUrl, title: 'Arctic Monkey - Do I Wanna Know?' });
     });
 
     //event listener for the try out youtube button. play the video with the id 'dQw4w9WgXcQ'
