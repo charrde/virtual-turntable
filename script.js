@@ -948,7 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.appendChild(document.createTextNode(` ${item.data.title}`));
             } else if (item.type === 'url') {
                 const urlIcon = document.createElement('i');
-                urlIcon.classList.add('bi', 'bi bi-globe');
+                urlIcon.classList.add('bi', 'bi-globe');
                 p.appendChild(urlIcon);
                 p.appendChild(document.createTextNode(` ${item.title || 'Sample Track'}`));
             }
