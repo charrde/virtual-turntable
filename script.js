@@ -811,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Delay duration in milliseconds (1.5 seconds)
         const delayDuration = 1500;
 
-        if (item.type === 'file' || item.type === 'url') {
+        if (item.type === 'file') {
             currentSource = 'audio';
             const fileURL = URL.createObjectURL(item.data);
             audio.src = fileURL;
@@ -877,10 +877,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     artwork: item.data.artwork || []
                 });
             }, delayDuration);
-        }
-        mediaCenter.classList.add('active'); // Ensure media center is open when playing
-        toggleButton.setAttribute('aria-expanded', 'true');
+
+        } else if (item.type === 'url') { 
+        currentSource = 'audio';
+        audio.src = item.data;
+        audio.load();
+        audio.volume = volumeControl.value;
+
+        trackNameDisplay.textContent = item.title || 'Sample Track';
+
+        record.classList.remove('paused');
+        playPauseButton.innerHTML = '<i class="bi bi-pause-fill"></i>';
+        turntable.classList.add('playing');
+        turntable.classList.remove('paused');
+        isPlaying = true;
+
+        currentTimeDisplay.textContent = '00:00';
+        totalDurationDisplay.textContent = '00:00';
+
+        connectAudioSource(audio);
+
+        moveTonearmTo(60);
+
+        setTimeout(() => {
+            audio.play();
+
+            setMediaSessionMetadata({
+                title: item.data.title,
+                artist: item.data.artist || 'Unknown Artist',
+                album: item.data.album || 'Unknown Album',
+                artwork: item.data.artwork || []
+            });
+        }, delayDuration);
     }
+    mediaCenter.classList.add('active');
+    toggleButton.setAttribute('aria-expanded', 'true');
+}
 
     // Function to add an item to the queue
     function addToQueue(item) {
@@ -913,6 +945,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 youtubeIcon.classList.add('bi', 'bi-youtube');
                 p.appendChild(youtubeIcon);
                 p.appendChild(document.createTextNode(` ${item.data.title}`));
+            } else if (item.type === 'url') {
+                const urlIcon = document.createElement('i');
+                urlIcon.classList.add('bi', 'bi-file-earmark-music');
+                p.appendChild(urlIcon);
+                p.appendChild(document.createTextNode(` ${item.title || 'Sample Track'}`));
             }
 
             const removeBtn = document.createElement('button');
@@ -985,155 +1022,155 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    goBackButton.addEventListener('click', () => {
-        if (historyStack.length > 0) {
-            goBackToPreviousTrack();
-        } else {
-            alert('No previous tracks in history.');
-        }
-    });
-
-    // Function to skip the current track and play the next one
-    function skipCurrentTrack() {
-        stopCurrentTrack();
-        playNextInQueue();
+goBackButton.addEventListener('click', () => {
+    if (historyStack.length > 0) {
+        goBackToPreviousTrack();
+    } else {
+        alert('No previous tracks in history.');
     }
+});
 
-    // Function to go back to the previous track
-    function goBackToPreviousTrack() {
-        const previousTrack = historyStack.pop();
-        if (previousTrack) {
-            // If there is a current track, push it back to the queue
-            if (currentTrack) {
-                queue.unshift(currentTrack);
-            }
-            currentTrack = previousTrack;
-            updateQueueDisplay();
-            playItem(previousTrack);
+// Function to skip the current track and play the next one
+function skipCurrentTrack() {
+    stopCurrentTrack();
+    playNextInQueue();
+}
+
+// Function to go back to the previous track
+function goBackToPreviousTrack() {
+    const previousTrack = historyStack.pop();
+    if (previousTrack) {
+        // If there is a current track, push it back to the queue
+        if (currentTrack) {
+            queue.unshift(currentTrack);
         }
+        currentTrack = previousTrack;
+        updateQueueDisplay();
+        playItem(previousTrack);
     }
+}
 
-    // ================================
-    //          Progress Bar
-    // ================================
-    const progressBar = document.querySelector('.progress-bar');
+// ================================
+//          Progress Bar
+// ================================
+const progressBar = document.querySelector('.progress-bar');
 
-    progressBar.addEventListener('click', (e) => {
-        if (currentSource === 'audio' && audio.duration) {
+progressBar.addEventListener('click', (e) => {
+    if (currentSource === 'audio' && audio.duration) {
+        const rect = progressBar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const width = rect.width;
+        const clickRatio = clickX / width;
+        const newTime = clickRatio * audio.duration;
+
+        audio.currentTime = newTime;
+
+        // Update Media Session Playback Position
+        updateMediaSessionPosition(newTime, audio.duration);
+    } else if (currentSource === 'youtube') {
+        const duration = youtubePlayer.getDuration();
+        if (duration) {
             const rect = progressBar.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const width = rect.width;
             const clickRatio = clickX / width;
-            const newTime = clickRatio * audio.duration;
+            const newTime = clickRatio * duration;
 
-            audio.currentTime = newTime;
+            youtubePlayer.seekTo(newTime, true);
 
             // Update Media Session Playback Position
-            updateMediaSessionPosition(newTime, audio.duration);
-        } else if (currentSource === 'youtube') {
-            const duration = youtubePlayer.getDuration();
-            if (duration) {
-                const rect = progressBar.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const width = rect.width;
-                const clickRatio = clickX / width;
-                const newTime = clickRatio * duration;
-
-                youtubePlayer.seekTo(newTime, true);
-
-                // Update Media Session Playback Position
-                updateMediaSessionPosition(newTime, duration);
-            }
-        }
-    });
-
-    // Close media center when pressing Escape key
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && mediaCenter.classList.contains('active')) {
-            mediaCenter.classList.remove('active');
-            toggleButton.setAttribute('aria-expanded', 'false');
-            const icon = toggleButton.querySelector('i');
-        }
-    });
-
-    // ================================
-    //     Media Session API Integration
-    // ================================
-
-    // Define Media Session functions outside the condition to avoid ReferenceError
-    function setMediaSessionMetadata(metadata) {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: metadata.title || '',
-                artist: metadata.artist || '',
-                album: metadata.album || '',
-                artwork: metadata.artwork || []
-            });
+            updateMediaSessionPosition(newTime, duration);
         }
     }
+});
 
-    function updateMediaSessionState(state) {
-        if ('mediaSession' in navigator) {
-            switch (state) {
-                case 'playing':
-                    navigator.mediaSession.playbackState = 'playing';
-                    break;
-                case 'paused':
-                    navigator.mediaSession.playbackState = 'paused';
-                    break;
-                case 'none':
-                    navigator.mediaSession.playbackState = 'none';
-                    break;
-                default:
-                    navigator.mediaSession.playbackState = 'none';
-            }
-        }
+// Close media center when pressing Escape key
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mediaCenter.classList.contains('active')) {
+        mediaCenter.classList.remove('active');
+        toggleButton.setAttribute('aria-expanded', 'false');
+        const icon = toggleButton.querySelector('i');
     }
+});
 
-    function updateMediaSessionPosition(currentTime, duration) {
-        if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession) {
-            navigator.mediaSession.setPositionState({
-                duration: duration,
-                playbackRate: currentSource === 'audio' ? audio.playbackRate : youtubePlayer.getPlaybackRate(),
-                position: currentTime
-            });
-        }
-    }
+// ================================
+//     Media Session API Integration
+// ================================
 
-    // Set Action Handlers if Media Session API is supported
+// Define Media Session functions outside the condition to avoid ReferenceError
+function setMediaSessionMetadata(metadata) {
     if ('mediaSession' in navigator) {
-        navigator.mediaSession.setActionHandler('play', () => {
-            playPauseButton.click();
-        });
-
-        navigator.mediaSession.setActionHandler('pause', () => {
-            playPauseButton.click();
-        });
-
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-            goBackButton.click();
-        });
-
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-            skipButton.click();
-        });
-
-        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-            const seekTime = details.seekOffset || 10;
-            if (currentSource === 'audio') {
-                audio.currentTime = Math.max(audio.currentTime - seekTime, 0);
-            } else if (currentSource === 'youtube') {
-                youtubePlayer.seekTo(Math.max(youtubePlayer.getCurrentTime() - seekTime, 0), true);
-            }
-        });
-
-        navigator.mediaSession.setActionHandler('seekforward', (details) => {
-            const seekTime = details.seekOffset || 10;
-            if (currentSource === 'audio') {
-                audio.currentTime = Math.min(audio.currentTime + seekTime, audio.duration);
-            } else if (currentSource === 'youtube') {
-                youtubePlayer.seekTo(Math.min(youtubePlayer.getCurrentTime() + seekTime, youtubePlayer.getDuration()), true);
-            }
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: metadata.title || '',
+            artist: metadata.artist || '',
+            album: metadata.album || '',
+            artwork: metadata.artwork || []
         });
     }
+}
+
+function updateMediaSessionState(state) {
+    if ('mediaSession' in navigator) {
+        switch (state) {
+            case 'playing':
+                navigator.mediaSession.playbackState = 'playing';
+                break;
+            case 'paused':
+                navigator.mediaSession.playbackState = 'paused';
+                break;
+            case 'none':
+                navigator.mediaSession.playbackState = 'none';
+                break;
+            default:
+                navigator.mediaSession.playbackState = 'none';
+        }
+    }
+}
+
+function updateMediaSessionPosition(currentTime, duration) {
+    if ('mediaSession' in navigator && 'setPositionState' in navigator.mediaSession) {
+        navigator.mediaSession.setPositionState({
+            duration: duration,
+            playbackRate: currentSource === 'audio' ? audio.playbackRate : youtubePlayer.getPlaybackRate(),
+            position: currentTime
+        });
+    }
+}
+
+// Set Action Handlers if Media Session API is supported
+if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+        playPauseButton.click();
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+        playPauseButton.click();
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+        goBackButton.click();
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+        skipButton.click();
+    });
+
+    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+        const seekTime = details.seekOffset || 10;
+        if (currentSource === 'audio') {
+            audio.currentTime = Math.max(audio.currentTime - seekTime, 0);
+        } else if (currentSource === 'youtube') {
+            youtubePlayer.seekTo(Math.max(youtubePlayer.getCurrentTime() - seekTime, 0), true);
+        }
+    });
+
+    navigator.mediaSession.setActionHandler('seekforward', (details) => {
+        const seekTime = details.seekOffset || 10;
+        if (currentSource === 'audio') {
+            audio.currentTime = Math.min(audio.currentTime + seekTime, audio.duration);
+        } else if (currentSource === 'youtube') {
+            youtubePlayer.seekTo(Math.min(youtubePlayer.getCurrentTime() + seekTime, youtubePlayer.getDuration()), true);
+        }
+    });
+}
 });
