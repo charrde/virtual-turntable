@@ -142,7 +142,7 @@ header {
 }
 
 /* Rotate Chevron when Dropdown is Active */
-#speed-button[aria-expanded="true"] .bi-chevron-down {
+#speed-button[aria-expanded="true"] .bi-chevron-up {
     transform: rotate(180deg);
 }
 
