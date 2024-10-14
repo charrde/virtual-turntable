@@ -121,8 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set a timeout to handle API load failure (e.g., 10 seconds)
     const youtubeAPITimeout = setTimeout(() => {
         if (!isYouTubeAPIReady) {
-            alert('Failed to load YouTube API. YouTube features will be unavailable.');
-            hideLoadingIndicator();
+            const loadingIndicatorText = loadingIndicator.children[0];
+            loadingIndicatorText.textContent = 'YouTube API failed to load. Reloading the page...';
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
         }
     }, 10000); // 10,000 milliseconds = 10 seconds
 
@@ -937,6 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Function to shuffle the queue
     shuffleButton.addEventListener('click', () => {
         for (let i = queue.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
