@@ -122,12 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const youtubeAPITimeout = setTimeout(() => {
         if (!isYouTubeAPIReady) {
             const loadingIndicatorText = loadingIndicator.children[0];
-            loadingIndicatorText.textContent = 'YouTube API failed to load. Reloading the page...';
+            loadingIndicatorText.textContent = 'YouTube API failed to load. Retrying...';
             setTimeout(() => {
                 window.location.reload();
             }, 3000);
         }
-    }, 10000); // 10,000 milliseconds = 10 seconds
+    }, 3000);
 
     // ================================
     //    YouTube IFrame Player Setup
