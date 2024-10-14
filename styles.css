@@ -69,6 +69,19 @@ header {
     gap: 20px;
 }
 
+footer {
+    text-align: center;
+    padding: 60px;
+    color: #ecf0f1;
+    background-color: #333;
+    box-shadow: 0 -1px 30px rgba(0, 0, 0, 0.3);
+    margin-top: 50px;
+}
+
+footer a {
+    color: #c0392b;
+}
+
 
 /* ============================================================= */
 /*                        Speed Control Styles                   */
@@ -182,8 +195,7 @@ header {
 
 .media-center-toggle {
     position: absolute;
-    top: -55px;
-    left: 45%;
+    top: -220px;
     width: 40px;
     height: 40px;
     background-color: #333;
@@ -201,6 +213,13 @@ header {
 
 .media-center-toggle:hover {
     background-color: #555;
+}
+
+.media-center-toggle-wrapper {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 /* Rotate the toggle button icon when active */
@@ -800,7 +819,7 @@ select {
         transform: translateY(240px);
     }
     .media-center-toggle {
-        left: 50%;
+        top: -270px;
     }
 }
 

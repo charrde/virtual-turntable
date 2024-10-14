@@ -76,7 +76,15 @@
                         <div class="youtube-input">
                             <input type="text" id="youtube-url-input" placeholder="Enter YouTube URL"
                                 aria-label="YouTube URL Input" />
-                            <button id="add-youtube-url" aria-label="Add YouTube URL to Queue">Add to Queue</button>
+                            <button id="add-youtube-url" aria-label="Add YouTube URL to Queue">
+                                <i class="bi bi-plus-circle-fill"></i>
+                                </i></button>
+                            <button id="shuffle-queue" aria-label="Shuffle Queue">
+                                <i class="bi bi-shuffle"></i>
+                            </button>
+                            <button id="clear-queue" aria-label="Clear Queue">
+                                <i class="bi bi-stars"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="control-group">
@@ -151,10 +159,22 @@
             </div>
         </div>
         <!-- Toggle Media Center Button -->
-        <button id="media-center-toggle" class="media-center-toggle" aria-label="Toggle Media Center">
-            <i class="bi bi-chevron-up"></i>
-        </button>
+        <div class="media-center-toggle-wrapper">
+            <button id="media-center-toggle" class="media-center-toggle" aria-label="Toggle Media Center">
+                <i class="bi bi-chevron-up"></i>
+            </button>
+        </div>
     </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Patrick Skinner</p>
+        <!-- link to developer website -->
+         <p>Check out my website! <a href="https://patski.dev" target="_blank" rel="noopener">patski.dev</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 
 </html>

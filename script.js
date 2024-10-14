@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tryOutFile = document.getElementById('try-out-file');
     const tryOutYouTube = document.getElementById('try-out-youtube');
     const testFileUrl = require('url:./audio/track.wav');
+    const shuffleButton = document.getElementById('shuffle-queue');
+    const clearQueueButton = document.getElementById('clear-queue');
 
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -924,6 +926,25 @@ document.addEventListener('DOMContentLoaded', () => {
             playNextInQueue();
         }
     }
+
+    // Function to clear the queue
+    clearQueueButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the queue?')) {
+            queue = [];
+            historyStack = [];
+            currentTrack = null;
+            updateQueueDisplay();
+        }
+    });
+
+    shuffleButton.addEventListener('click', () => {
+        for (let i = queue.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [queue[i], queue[j]] = [queue[j], queue[i]];
+        }
+        updateQueueDisplay();
+    });
+
 
     // Function to update the queue display
     function updateQueueDisplay() {
