@@ -823,6 +823,8 @@ select {
 
     .media-center {
         padding: 25px 60px;
+        width: 70%;
+        right: 15%;
     }
 
     .media-center .control-group {
